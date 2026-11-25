@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triagem Online – Assistente de Backoffice | AUDITRAN</title>
+  <!-- Tailwind CSS via CDN para estilização responsiva -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Fonte Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    /* Estilos dedicados para impressão e salvamento em PDF */
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+      .print-clean {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Cabeçalho Institucional / Apresentação da Vaga -->
+  <header class="bg-gradient-to-r from-[#0f2942] to-[#1b3f66] text-white shadow-md">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+      <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3.5 py-1 text-xs font-semibold tracking-wider uppercase mb-4">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        AUDITRAN • Processo Seletivo
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight leading-tight">
+        Assistente de Backoffice – Análise de Vistorias Veiculares
+      </h1>
+      <p class="mt-3 text-slate-200 text-sm sm:text-base leading-relaxed max-w-3xl">
+        A <strong class="text-white">AUDITRAN</strong> atua com análise de vistorias veiculares. Na nossa operação, a primeira análise passa por uma inteligência artificial (IA) e, quando a IA faz uma reprovação, o assistente de backoffice entra para conferir os dados e imagens da vistoria (como placa, chassi, número do motor e documentos).
+      </p>
+
+      <!-- Cards com as Condições da Vaga -->
+      <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs sm:text-sm">
+        <div class="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl p-3.5">
+          <div class="text-slate-300 text-xs uppercase font-medium">Local e Modelo</div>
+          <div class="font-semibold text-white mt-0.5">Presencial • Belo Horizonte – MG</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl p-3.5">
+          <div class="text-slate-300 text-xs uppercase font-medium">Jornada</div>
+          <div class="font-semibold text-white mt-0.5">Seg. a Sex. • 08h às 18h</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl p-3.5">
+          <div class="text-slate-300 text-xs uppercase font-medium">Salário</div>
+          <div class="font-semibold text-white mt-0.5">R$ 2.500,00 mensais</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl p-3.5">
+          <div class="text-slate-300 text-xs uppercase font-medium">Benefícios</div>
+          <div class="font-semibold text-white mt-0.5">VT + Vale-alimentação R$ 30,00/dia</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 flex-1">
+
+    <!-- Aviso de Privacidade / LGPD -->
+    <div class="no-print bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-6 flex items-start gap-3">
+      <svg class="w-5 h-5 text-[#1b3f66] shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+      </svg>
+      <div class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+        <strong class="text-[#0f2942]">Aviso de Privacidade (LGPD):</strong> Os dados preenchidos neste formulário são confidenciais e serão utilizados exclusivamente para o processo seletivo da vaga de Assistente de Backoffice na AUDITRAN.
+      </div>
+    </div>
+
+    <!-- Banner de Alerta de Validação -->
+    <div id="errorBanner" class="hidden no-print bg-red-50 border border-red-200 text-red-800 rounded-2xl p-4 mb-6 text-sm flex items-center gap-3">
+      <svg class="w-5 h-5 text-red-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+      </svg>
+      <span id="errorBannerText">Por favor, preencha todos os campos obrigatórios destacados antes de continuar.</span>
+    </div>
+
+    <!-- FORMULÁRIO DE TRIAGEM -->
+    <form id="triagemForm" novalidate class="space-y-6">
+
+      <!-- Bloco 1: Dados Básicos -->
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-7">
+        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
+          <span class="w-8 h-8 rounded-lg bg-[#0f2942] text-white text-sm font-bold flex items-center justify-center shrink-0">1</span>
+          <div>
+            <h2 class="text-lg font-bold text-[#0f2942]">Dados Básicos</h2>
+            <p class="text-xs text-slate-500">Identificação e contato para retorno do processo seletivo</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2">
+            <label for="nome" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Nome completo <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="nome" name="nome" required placeholder="Digite seu nome completo"
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition">
+          </div>
+
+          <div>
+            <label for="telefone" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Telefone / WhatsApp <span class="text-red-500">*</span>
+            </label>
+            <input type="tel" id="telefone" name="telefone" required placeholder="(31) 99999-9999"
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition">
+          </div>
+
+          <div>
+            <label for="bairro" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Bairro / Região onde mora <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="bairro" name="bairro" required placeholder="Ex.: Padre Eustáquio – Belo Horizonte"
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="referencia" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Ponto de referência <span class="text-xs font-normal text-slate-400">(opcional)</span>
+            </label>
+            <input type="text" id="referencia" name="referencia" placeholder="Ex.: Próximo à estação de metrô ou avenida principal..."
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition">
+          </div>
+        </div>
+      </section>
+
+      <!-- Bloco 2: Deslocamento e Rotina -->
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-7">
+        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
+          <span class="w-8 h-8 rounded-lg bg-[#0f2942] text-white text-sm font-bold flex items-center justify-center shrink-0">2</span>
+          <div>
+            <h2 class="text-lg font-bold text-[#0f2942]">Deslocamento e Rotina</h2>
+            <p class="text-xs text-slate-500">Viabilidade de trajeto e disponibilidade de horário</p>
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div>
+            <label for="deslocamento" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Como será o seu deslocamento até a empresa (transporte público, linhas, conexões, se já conhece o trajeto) e como o horário de segunda a sexta, das 08h às 18h, se encaixa na sua rotina? <span class="text-red-500">*</span>
+            </label>
+            <textarea id="deslocamento" name="deslocamento" rows="3" required placeholder="Descreva como fará o trajeto e se o horário comercial funciona bem na sua rotina..."
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition"></textarea>
+          </div>
+
+          <div>
+            <label for="compromissos" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Você possui algum compromisso fixo (como estudos, cursos ou atividades recorrentes) que possa conflitar com o horário de trabalho? <span class="text-red-500">*</span>
+            </label>
+            <textarea id="compromissos" name="compromissos" rows="2" required placeholder="Ex.: Não possuo compromissos neste horário / Estudo à noite a partir das 19h..."
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bloco 3: Histórico Profissional e Rotina de Atenção -->
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-7">
+        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
+          <span class="w-8 h-8 rounded-lg bg-[#0f2942] text-white text-sm font-bold flex items-center justify-center shrink-0">3</span>
+          <div>
+            <h2 class="text-lg font-bold text-[#0f2942]">Histórico Profissional e Rotina de Atenção</h2>
+            <p class="text-xs text-slate-500">Experiências anteriores, estabilidade, foco e sigilo</p>
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div>
+            <label for="expAnterior" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Como foi a sua experiência no seu emprego anterior? <span class="text-red-500">*</span>
+            </label>
+            <textarea id="expAnterior" name="expAnterior" rows="3" required placeholder="Conte suas principais atividades ou, se for primeiro emprego, experiências de estudo/projetos..."
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition"></textarea>
+          </div>
+
+          <div>
+            <label for="saidasEstabilidade" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Olhando para o seu histórico profissional, o que motivou as suas últimas saídas e o que costuma fazer você permanecer ou sair de um emprego? <span class="text-red-500">*</span>
+            </label>
+            <textarea id="saidasEstabilidade" name="saidasEstabilidade" rows="3" required placeholder="Explique objetivamente os motivos de desligamento anteriores e o que valoriza para permanecer..."
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition"></textarea>
+          </div>
+
+          <div>
+            <label for="rotinaRepetitiva" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Como você lida com rotinas repetitivas que exigem atenção constante? <span class="text-red-500">*</span>
+            </label>
+            <textarea id="rotinaRepetitiva" name="rotinaRepetitiva" rows="2" required placeholder="Explique como mantém a concentração e a qualidade na conferência contínua..."
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition"></textarea>
+          </div>
+
+          <div>
+            <label for="sigiloResponsabilidade" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Você vai lidar com informações e documentos de outras pessoas todos os dias. Como você enxerga a responsabilidade de manter o sigilo e o cuidado com esses dados? <span class="text-red-500">*</span>
+            </label>
+            <textarea id="sigiloResponsabilidade" name="sigiloResponsabilidade" rows="2" required placeholder="Compartilhe sua postura em relação à confidencialidade e cuidado com documentos..."
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bloco 4: Análise de Dados e Informática -->
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-7">
+        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
+          <span class="w-8 h-8 rounded-lg bg-[#0f2942] text-white text-sm font-bold flex items-center justify-center shrink-0">4</span>
+          <div>
+            <h2 class="text-lg font-bold text-[#0f2942]">Análise de Dados e Informática</h2>
+            <p class="text-xs text-slate-500">Conferência de detalhes, uso do computador e comunicação escrita</p>
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div>
+            <label for="analiseDados" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Você já teve contato com conferência de dados, comparação de informações, planilhas ou sistemas? Como avalia a sua facilidade para analisar dados e notar pequenos detalhes divergentes (como número trocado ou informação faltando)? <span class="text-red-500">*</span>
+            </label>
+            <textarea id="analiseDados" name="analiseDados" rows="3" required placeholder="Conte sua experiência e facilidade para comparar informações e identificar divergências..."
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition"></textarea>
+          </div>
+
+          <div>
+            <label for="usoComputador" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Como é o seu dia a dia usando computador (alternar entre várias abas e janelas, usar sistemas, planilhas, visualizar fotos e vídeos)? <span class="text-red-500">*</span>
+            </label>
+            <textarea id="usoComputador" name="usoComputador" rows="2" required placeholder="Descreva sua familiaridade com computador, planilhas, sistemas e visualização de mídia..."
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition"></textarea>
+          </div>
+
+          <div>
+            <label for="escritaRegras" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Na função, é necessário registrar análises e apontar divergências por escrito. Como você avalia a sua escrita objetiva e a facilidade para seguir regras, procedimentos e aprender sistemas novos? <span class="text-red-500">*</span>
+            </label>
+            <textarea id="escritaRegras" name="escritaRegras" rows="3" required placeholder="Explique como redige registros objetivos e como aprende novos sistemas e procedimentos..."
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bloco 5: Alinhamento com a Vaga -->
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-7">
+        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
+          <span class="w-8 h-8 rounded-lg bg-[#0f2942] text-white text-sm font-bold flex items-center justify-center shrink-0">5</span>
+          <div>
+            <h2 class="text-lg font-bold text-[#0f2942]">Alinhamento com a Vaga</h2>
+            <p class="text-xs text-slate-500">Motivação, condições e observações finais</p>
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div>
+            <label for="interesseVaga" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              O que mais chamou a sua atenção na vaga e o que você imagina que pode exigir mais atenção no início? <span class="text-red-500">*</span>
+            </label>
+            <textarea id="interesseVaga" name="interesseVaga" rows="2" required placeholder="Conte o que te atraiu na oportunidade e o que exigirá maior dedicação nos primeiros dias..."
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition"></textarea>
+          </div>
+
+          <div id="condicoesGroup">
+            <span class="block text-sm font-semibold text-slate-700 mb-2">
+              As condições da vaga (presencial em BH, segunda a sexta das 08h às 18h, salário de R$ 2.500,00, vale-transporte e alimentação de R$ 30,00/dia) atendem à sua realidade? <span class="text-red-500">*</span>
+            </span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-3.5 cursor-pointer hover:bg-slate-50 transition">
+                <input type="radio" name="condicoes" value="Sim" required class="w-4 h-4 text-[#0f2942] focus:ring-[#1b3f66]">
+                <span class="text-sm font-medium text-slate-800">Sim</span>
+              </label>
+              <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-3.5 cursor-pointer hover:bg-slate-50 transition">
+                <input type="radio" name="condicoes" value="Sim, com ressalvas" class="w-4 h-4 text-[#0f2942] focus:ring-[#1b3f66]">
+                <span class="text-sm font-medium text-slate-800">Sim, com ressalvas</span>
+              </label>
+              <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-3.5 cursor-pointer hover:bg-slate-50 transition">
+                <input type="radio" name="condicoes" value="Não" class="w-4 h-4 text-[#0f2942] focus:ring-[#1b3f66]">
+                <span class="text-sm font-medium text-slate-800">Não</span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label for="observacao" class="block text-sm font-semibold text-slate-700 mb-1.5">
+              Observação <span class="text-xs font-normal text-slate-400">(opcional – deseja acrescentar algo importante sobre sua disponibilidade ou experiência?)</span>
+            </label>
+            <textarea id="observacao" name="observacao" rows="2" placeholder="Espaço opcional para informações adicionais ou ressalvas..."
+              class="w-full rounded-xl border border-slate-300 px-3.5 py-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1b3f66] focus:border-transparent transition"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Botão de Revisão e Geração do Envio -->
+      <div class="no-print flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 pb-6">
+        <p class="text-xs text-slate-500">
+          Campos marcados com <span class="text-red-500 font-semibold">*</span> são obrigatórios.
+        </p>
+        <button type="submit" id="submitBtn"
+          class="w-full sm:w-auto bg-[#0f2942] hover:bg-[#1b3f66] text-white font-semibold text-sm px-8 py-3.5 rounded-xl shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
+          <span>Revisar e Gerar Envio</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </form>
+
+    <!-- TELA DE RESUMO E ENVIO MANUAL VIA WHATSAPP -->
+    <section id="confirmationSection" class="hidden space-y-6">
+      <div class="bg-white print-clean rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+
+        <!-- Banner de Instrução de Envio -->
+        <div class="no-print bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-5 flex items-start gap-3">
+          <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 mt-0.5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-emerald-900">Respostas prontas para envio!</h2>
+            <p class="text-xs sm:text-sm text-emerald-800 mt-0.5 leading-relaxed">
+              Clique no botão verde <strong>"Abrir WhatsApp e Enviar"</strong> para abrir a conversa com o recrutamento da AUDITRAN (<strong>(31) 99953-5724</strong>) já com o seu resumo preenchido, e depois toque em enviar no aplicativo. Se preferir, copie o texto e cole manualmente no WhatsApp.
+            </p>
+          </div>
+        </div>
+
+        <!-- Alerta caso o texto ultrapasse o limite seguro de URL do WhatsApp -->
+        <div id="urlLengthWarning" class="hidden no-print bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-4 mb-5 text-xs sm:text-sm flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          </svg>
+          <div>
+            <strong>Atenção ao tamanho do texto:</strong> Como suas respostas ficaram bem detalhadas, o link direto do WhatsApp pode cortar o final da mensagem em alguns aparelhos. Recomendamos clicar em <strong>"Copiar Respostas"</strong> abaixo e colar diretamente na conversa do WhatsApp <strong>(31) 99953-5724</strong> para garantir que nada fique de fora.
+          </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="no-print flex flex-wrap gap-3 mb-5">
+          <a id="whatsappBtn" href="https://wa.me/5531999535724" target="_blank" rel="noopener noreferrer"
+            class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-6 py-3.5 rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.546 20.2a1 1 0 001.254 1.254l3.032-.892A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
+            </svg>
+            <span>Abrir WhatsApp e Enviar</span>
+          </a>
+
+          <button type="button" id="copyBtn"
+            class="w-full sm:w-auto bg-[#0f2942] hover:bg-[#1b3f66] text-white text-sm font-semibold px-5 py-3.5 rounded-xl shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+            <span id="copyBtnText">Copiar Respostas</span>
+          </button>
+
+          <button type="button" id="printBtn"
+            class="w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-sm font-semibold px-4 py-3.5 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+            </svg>
+            <span>Salvar / Imprimir PDF</span>
+          </button>
+
+          <button type="button" id="editBtn"
+            class="w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 text-sm font-medium px-4 py-3.5 rounded-xl transition cursor-pointer">
+            Voltar e Editar
+          </button>
+        </div>
+
+        <!-- Feedback visual de cópia -->
+        <div id="copyFeedback" class="hidden no-print mb-5 text-xs sm:text-sm font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
+          Copiado! Agora abra a conversa com (31) 99953-5724 no WhatsApp, cole o texto e envie.
+        </div>
+
+        <!-- Resumo Completo das Respostas -->
+        <div class="border-t border-slate-200 pt-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
+            <h3 class="text-lg font-bold text-[#0f2942]">Resumo da Candidatura – AUDITRAN</h3>
+            <span id="summaryTimestamp" class="text-xs text-slate-500"></span>
+          </div>
+          <div id="summaryContent" class="space-y-3.5 text-sm"></div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Rodapé Discreto -->
+  <footer class="no-print max-w-4xl w-full mx-auto px-4 sm:px-6 py-6 text-center text-xs text-slate-500">
+    AUDITRAN • Análise de Vistorias Veiculares • Belo Horizonte – MG • WhatsApp de recrutamento:
+    <a href="https://wa.me/5531999535724" target="_blank" rel="noopener noreferrer" class="font-semibold text-[#0f2942] hover:underline">(31) 99953-5724</a>
+  </footer>
+
+  <script>
+    const WHATSAPP_NUMBER = '5531999535724';
+    const MAX_SAFE_WHATSAPP_URL_LENGTH = 3800;
+
+    const form = document.getElementById('triagemForm');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorBannerText = document.getElementById('errorBannerText');
+    const confirmationSection = document.getElementById('confirmationSection');
+    const summaryContent = document.getElementById('summaryContent');
+    const summaryTimestamp = document.getElementById('summaryTimestamp');
+    const whatsappBtn = document.getElementById('whatsappBtn');
+    const urlLengthWarning = document.getElementById('urlLengthWarning');
+    const copyBtn = document.getElementById('copyBtn');
+    const copyBtnText = document.getElementById('copyBtnText');
+    const copyFeedback = document.getElementById('copyFeedback');
+    const printBtn = document.getElementById('printBtn');
+    const editBtn = document.getElementById('editBtn');
+
+    let formattedWhatsAppText = '';
+
+    // Remove destaque de erro assim que o candidato preenche o campo
+    form.querySelectorAll('input, textarea').forEach(field => {
+      field.addEventListener('input', () => {
+        field.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+        if (field.name === 'condicoes') {
+          document.getElementById('condicoesGroup').classList.remove('p-3.5', 'rounded-xl', 'bg-red-50/70', 'border', 'border-red-300');
+        }
+      });
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      errorBanner.classList.add('hidden');
+
+      let firstInvalid = null;
+      const requiredFields = form.querySelectorAll('[required]');
+
+      requiredFields.forEach(field => {
+        if (field.type === 'radio') {
+          const checked = form.querySelector(`input[name="${field.name}"]:checked`);
+          if (!checked) {
+            const group = document.getElementById('condicoesGroup');
+            group.classList.add('p-3.5', 'rounded-xl', 'bg-red-50/70', 'border', 'border-red-300');
+            if (!firstInvalid) firstInvalid = group;
+          }
+        } else if (!field.value.trim()) {
+          field.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+          if (!firstInvalid) firstInvalid = field;
+        }
+      });
+
+      if (firstInvalid) {
+        errorBannerText.textContent = 'Por favor, preencha todos os campos obrigatórios destacados antes de revisar e enviar.';
+        errorBanner.classList.remove('hidden');
+        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // Coleta os dados do formulário
+      const data = {
+        nome: document.getElementById('nome').value.trim(),
+        telefone: document.getElementById('telefone').value.trim(),
+        bairro: document.getElementById('bairro').value.trim(),
+        referencia: document.getElementById('referencia').value.trim() || 'Não informado',
+        deslocamento: document.getElementById('deslocamento').value.trim(),
+        compromissos: document.getElementById('compromissos').value.trim(),
+        expAnterior: document.getElementById('expAnterior').value.trim(),
+        saidasEstabilidade: document.getElementById('saidasEstabilidade').value.trim(),
+        rotinaRepetitiva: document.getElementById('rotinaRepetitiva').value.trim(),
+        sigiloResponsabilidade: document.getElementById('sigiloResponsabilidade').value.trim(),
+        analiseDados: document.getElementById('analiseDados').value.trim(),
+        usoComputador: document.getElementById('usoComputador').value.trim(),
+        escritaRegras: document.getElementById('escritaRegras').value.trim(),
+        interesseVaga: document.getElementById('interesseVaga').value.trim(),
+        condicoes: form.querySelector('input[name="condicoes"]:checked').value,
+        observacao: document.getElementById('observacao').value.trim() || 'Nenhuma observação adicional.'
+      };
+
+      const items = [
+        { label: 'Nome completo', value: data.nome },
+        { label: 'Telefone / WhatsApp', value: data.telefone },
+        { label: 'Bairro / Região', value: data.bairro },
+        { label: 'Ponto de referência', value: data.referencia },
+        { label: 'Deslocamento e rotina (08h às 18h)', value: data.deslocamento },
+        { label: 'Compromissos fixos', value: data.compromissos },
+        { label: 'Experiência no emprego anterior', value: data.expAnterior },
+        { label: 'Histórico de saídas e permanência', value: data.saidasEstabilidade },
+        { label: 'Rotinas repetitivas e atenção constante', value: data.rotinaRepetitiva },
+        { label: 'Sigilo e cuidado com dados', value: data.sigiloResponsabilidade },
+        { label: 'Análise de dados e detalhes divergentes', value: data.analiseDados },
+        { label: 'Uso diário do computador', value: data.usoComputador },
+        { label: 'Escrita objetiva, regras e novos sistemas', value: data.escritaRegras },
+        { label: 'O que chamou atenção na vaga e desafios iniciais', value: data.interesseVaga },
+        { label: 'Condições da vaga atendem à realidade?', value: data.condicoes },
+        { label: 'Observação', value: data.observacao }
+      ];
+
+      // Renderiza o resumo visual na tela
+      summaryContent.innerHTML = '';
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'bg-slate-50 border border-slate-200/80 rounded-xl p-3.5';
+
+        const labelEl = document.createElement('div');
+        labelEl.className = 'text-xs font-bold uppercase tracking-wide text-[#0f2942] mb-1';
+        labelEl.textContent = item.label;
+
+        const valueEl = document.createElement('div');
+        valueEl.className = 'text-sm text-slate-800 whitespace-pre-line leading-relaxed';
+        valueEl.textContent = item.value;
+
+        card.appendChild(labelEl);
+        card.appendChild(valueEl);
+        summaryContent.appendChild(card);
+      });
+
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('pt-BR');
+      const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      summaryTimestamp.textContent = `Preenchido em ${dateStr} às ${timeStr}`;
+
+      // Monta o texto formatado para envio via WhatsApp
+      formattedWhatsAppText =
+        `*TRIAGEM – ASSISTENTE DE BACKOFFICE (AUDITRAN)*\n` +
+        `Data: ${dateStr} às ${timeStr}\n` +
+        `----------------------------------------\n\n` +
+        items.map(item => `*${item.label}:*\n${item.value}`).join('\n\n');
+
+      // Gera o link wa.me com o texto codificado e verifica comprimento seguro
+      const encodedText = encodeURIComponent(formattedWhatsAppText);
+      const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedText}`;
+      whatsappBtn.href = waUrl;
+
+      if (waUrl.length > MAX_SAFE_WHATSAPP_URL_LENGTH) {
+        urlLengthWarning.classList.remove('hidden');
+      } else {
+        urlLengthWarning.classList.add('hidden');
+      }
+
+      form.classList.add('hidden');
+      confirmationSection.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Copia o texto formatado para a área de transferência
+    copyBtn.addEventListener('click', () => {
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = formattedWhatsAppText;
+      tempTextArea.style.position = 'fixed';
+      tempTextArea.style.left = '-9999px';
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+
+      try {
+        document.execCommand('copy');
+        copyBtnText.textContent = 'Copiado!';
+        copyFeedback.classList.remove('hidden');
+        setTimeout(() => {
+          copyBtnText.textContent = 'Copiar Respostas';
+          copyFeedback.classList.add('hidden');
+        }, 4000);
+      } catch (err) {
+        copyFeedback.textContent = 'Não foi possível copiar automaticamente. Selecione o resumo abaixo e copie manualmente.';
+        copyFeedback.classList.remove('hidden');
+      }
+
+      document.body.removeChild(tempTextArea);
+    });
+
+    // Impressão / Salvar em PDF
+    printBtn.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Volta para edição mantendo os dados preenchidos
+    editBtn.addEventListener('click', () => {
+      confirmationSection.classList.add('hidden');
+      form.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
